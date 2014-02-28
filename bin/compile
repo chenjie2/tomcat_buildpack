@@ -1,6 +1,22 @@
-#!/bin/sh
+#!/bin/bash
+# Usage: bin/compile BUILD_DIR CACHE_DIR ENV_DIR
 
-if [ ! -s $1/prop.txt ]; then
-	echo "prop.txt was empty"
-	exit 1
+BUILD_DIR=$1
+CACHE_DIR=$2
+mkdir -p $BUILD_DIR $CACHE_DIR
+
+if [ -z "$UAP_VERSION" ]; then
+  UAP_VERSION=6.3
 fi
+
+UAP_URL="http://127.0.0.1/uap-${UAP_VERSION}.zip"
+
+# download UAP
+cd ${BUILD_DIR}
+curl --silent --max-time 60 --location $UAP_URL | unzip 
+
+sed -i 's/<port>80<\/port>/<port>$PORT<\/port>/g' ./UAP/ierp/bin/prop.xml
+
+chmod +x UAP/*.sh
+
+echo "-----> Done with compile"
