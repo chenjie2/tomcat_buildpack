@@ -1,6 +1,9 @@
-#!/bin/sh
+#!/bin/bash
+# Usage: bin/compile <build-dir>
 
-if [ ! -s $1/prop.txt ]; then
-	echo "prop.txt was empty"
+if [ -f $1/prop.txt ]; then
+	echo "UAP"
+	exit 0
+else
 	exit 1
 fi
