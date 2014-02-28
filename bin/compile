@@ -1,22 +1,52 @@
 #!/bin/bash
 # Usage: bin/compile BUILD_DIR CACHE_DIR ENV_DIR
 
+set -e
+set -o pipefail
+
+export_env_dir() {
+  env_dir=$1
+  if [ -d "$env_dir" ]; then
+    for e in $(ls $env_dir); do
+      export "$e=$(cat $env_dir/$e)"
+      :
+    done
+  fi
+}
+export_env_dir $3
+
 BUILD_DIR=$1
 CACHE_DIR=$2
 mkdir -p $BUILD_DIR $CACHE_DIR
 
-if [ -z "$UAP_VERSION" ]; then
-  UAP_VERSION=6.3
+
+UAP_URL="http://pan.baidu.com/s/1sjuE0XJ"
+JDK_URL="http://pan.baidu.com/s/1mgkFouc"
+
+# download UAP,openjdk
+cd ${BUILD_DIR}
+curl --silent --max-time 360 --location $UAP_URL | unzip 
+
+if [ ! -d ./openjdk ]; then
+  mkdir -p ./openjdk && cd ./openjdk
+  curl --silent --max-time 360 --location $JDK_URL | tar xz
 fi
 
-UAP_URL="http://127.0.0.1/uap-${UAP_VERSION}.zip"
-
-# download UAP
+#gen startup.sh
 cd ${BUILD_DIR}
-curl --silent --max-time 60 --location $UAP_URL | unzip 
 
-sed -i 's/<port>80<\/port>/<port>$PORT<\/port>/g' ./UAP/ierp/bin/prop.xml
+cat >>startup.sh <<EOF
+NC_HOME=$PWD/UAP
+JAVA_HOME=$PWD/openjdk
 
-chmod +x UAP/*.sh
+cd ${NC_HOME}
+
+. ${NC_HOME}/bin/uapSetupCmdLine.sh
+
+${JAVA_HOME}/bin/java -classpath ${NC_CLASSPATH} -Dhttp.port=${PORT} -Dnc.bs.logging.format=text -Dnc.server.location=${NC_HOME} nc.bs.mw.start.NCStarter
+EOF
+
+chmod +x startup.sh
+chmod +x UAP/bin/*.sh
 
 echo "-----> Done with compile"
