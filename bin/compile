@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Usage: bin/compile BUILD_DIR CACHE_DIR ENV_DIR
 
 set -e
