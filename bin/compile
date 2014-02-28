@@ -25,10 +25,12 @@ JDK_URL="http://pan.baidu.com/s/1mgkFouc"
 
 # download UAP,openjdk
 cd ${BUILD_DIR}
+echo "<===============download uap"
 curl --silent --max-time 360 --location $UAP_URL | unzip 
 
 if [ ! -d ./openjdk ]; then
   mkdir -p ./openjdk && cd ./openjdk
+  echo "<================download jdk"
   curl --silent --max-time 360 --location $JDK_URL | tar xz
 fi
 
