@@ -3,8 +3,6 @@
 
 cat <<EOF
 ---
-addons:
-config_vars:
 default_process_types:
-  uap: ./UAP/startup.sh
+  uap: startup.sh
 EOF
