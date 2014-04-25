@@ -1,4 +1,1 @@
-uap_buildpack
-=============
-
-uap_buildpack
+tomcat_buildpack
